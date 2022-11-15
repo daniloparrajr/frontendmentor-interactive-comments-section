@@ -41,7 +41,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
 	const renderReplies = (replies) => {
 		return (
 			<div className="pl-4 border-l-2 border-light-gray">
-				{replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser}/>)}
+				{replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote}/>)}
 			</div>
 		);
 	}
@@ -51,6 +51,16 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
 			<span className="text-moderate-blue font-medium mr-1.5">@{replyingTo}</span>
 		)
 	}
+
+  const renderScore = () => {
+    return (
+      <div className="bg-very-light-gray rounded-[10px] flex items-center lg:flex-col">
+        <button onClick={()=>{onUpVote(details.id, details.score)}} className="p-3.5"><IconPlus/></button>
+        <span className="text-moderate-blue font-medium lg:py-[3px]">{score}</span>
+        <button onClick={()=>{onDownVote(details.id, details.score)}} className="p-3.5"><IconMinus/></button>
+      </div>
+		)
+  }
 
 	return (
 		<article>
@@ -68,11 +78,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
           </p>
         </div>
 				<div className="flex justify-between lg:order-start lg:mr-6 lg:grow-0">
-					<div className="bg-very-light-gray rounded-[10px] flex items-center lg:flex-col">
-						<button className="p-3.5"><IconPlus/></button>
-						<span className="text-moderate-blue font-medium lg:py-[3px]">{score}</span>
-						<button className="p-3.5"><IconMinus/></button>
-					</div>
+					{renderScore()}
           <div className="lg:absolute lg:z-50 lg:top-6 lg:right-6">
 					  {currentUser.username !== user.username ? renderReplyButton() : renderUserButtons()}
           </div>
