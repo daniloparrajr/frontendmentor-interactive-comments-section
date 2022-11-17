@@ -19,21 +19,46 @@ const getComments = () => {
 function App() {
 	const [comments, setComments] = useState(getComments());
 
-	const updateCommenht = (id, key, value) => {
+	const updateComment = (id, key, value) => {
+    const newComment = [...comments];
+
+    function recursiveUpdate(comment) {
+      if (comment.id === id) {
+        comment[key] = value;
+        return true;
+      } else if ( 'replies' in comment ) {
+        comment.replies.forEach((reply) => {
+          recursiveUpdate(reply);
+        });
+      }
+
+      return false;
+    }
+
+    newComment.some((comment) => {
+      return recursiveUpdate(comment);
+    });
+   
+		localStorage.setItem('comments', JSON.stringify(newComment));
+    setComments(newComment);
 	}
 
 	const upVoteComment = (commentId, voteScore) => {
-		console.log('Up voting!');
+		updateComment(commentId, 'score', voteScore + 1);
 	}
 
 	const downVoteComment = (commentId, voteScore) => {
-		console.log('Down voting!');
+		updateComment(commentId, 'score', voteScore - 1);
 	}
 
 	return (
 		<main className="py-8 px-4">
-			<CommentsSection comments={comments} currentUser={data.currentUser} onUpVoteComment={upVoteComment}
-							 onDownVoteComment={downVoteComment}/>
+			<CommentsSection
+        comments={comments}
+        currentUser={data.currentUser}
+        onUpVoteComment={upVoteComment}
+				onDownVoteComment={downVoteComment}
+      />
 		</main>
 	);
 }
