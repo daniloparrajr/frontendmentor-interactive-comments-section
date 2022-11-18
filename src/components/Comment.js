@@ -4,9 +4,12 @@ import { ReactComponent as IconReply } from '../images/icon-reply.svg';
 import { ReactComponent as IconDelete } from '../images/icon-delete.svg';
 import { ReactComponent as IconEdit } from '../images/icon-edit.svg';
 import Avatar from "./Avatar";
+import {useState} from 'react';
 
-const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
-  const {content, createdAt, score, user, replyingTo } = details;
+const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } ) => {
+  const {id, content, createdAt, score, user, replyingTo } = details;
+  const [isEdit, setIsEdit] = useState(false);
+  const [commentContent, setCommentContent] = useState(content);
 
 	const renderCurrentUserLabel = () => {
 		return (
@@ -30,7 +33,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
 					<IconDelete className="mr-2" />
 					<span className="font-medium">Delete</span>
 				</button>
-				<button className="text-moderate-blue flex items-center">
+				<button onClick={()=>{setIsEdit(!isEdit)}} className="text-moderate-blue flex items-center">
 					<IconEdit className="mr-2" />
 					<span className="font-medium">Edit</span>
 				</button>
@@ -41,7 +44,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
 	const renderReplies = (replies) => {
 		return (
 			<div className="pl-4 border-l-2 border-light-gray">
-				{replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote}/>)}
+				{replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote} onEditContent={onEditContent}/>)}
 			</div>
 		);
 	}
@@ -55,11 +58,32 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
   const renderScore = () => {
     return (
       <div className="bg-very-light-gray rounded-[10px] flex items-center lg:flex-col">
-        <button onClick={()=>{onUpVote(details.id, details.score)}} className="p-3.5"><IconPlus/></button>
+        <button onClick={()=>{onUpVote(id, score)}} className="p-3.5"><IconPlus/></button>
         <span className="text-moderate-blue font-medium lg:py-[3px]">{score}</span>
-        <button onClick={()=>{onDownVote(details.id, details.score)}} className="p-3.5"><IconMinus/></button>
+        <button onClick={()=>{onDownVote(id, score)}} className="p-3.5"><IconMinus/></button>
       </div>
 		)
+  }
+
+  const renderContent = () => {
+    return (
+      <p className="text-grayish-blue mb-4">{replyingTo && renderReplyingto()}{content}</p>
+    );
+  }
+
+  const onEditContentFormSubmit = (e) => {
+    e.preventDefault();
+    onEditContent(id,commentContent);
+    setIsEdit(!isEdit);
+  }
+
+  const renderEditForm = () => {
+    return (
+      <form onSubmit={(e)=>{onEditContentFormSubmit(e);}}>
+        <textarea className="border-moderate-blue border w-full h-auto rounded-lg py-4 px-6 text-grayish-blue mb-4" onChange={(e)=>{setCommentContent(e.target.value)}} defaultValue={content}></textarea>
+        <button className="btn px-5 block ml-auto">UPDATE</button>
+      </form>
+    );
   }
 
 	return (
@@ -72,10 +96,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote } ) => {
             {currentUser.username === user.username && renderCurrentUserLabel()}
             <p className="text-grayish-blue ml-4">{createdAt}</p>
           </header>
-          <p className="text-grayish-blue mb-4">
-            {replyingTo && renderReplyingto()}
-            {content}
-          </p>
+          {isEdit ? renderEditForm() : renderContent()}
         </div>
 				<div className="flex justify-between lg:order-start lg:mr-6 lg:grow-0">
 					{renderScore()}

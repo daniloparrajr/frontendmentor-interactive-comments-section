@@ -51,6 +51,10 @@ function App() {
 		updateComment(commentId, 'score', voteScore - 1);
 	}
 
+  const editCommentContent = (commentId, content) => {
+    updateComment(commentId, 'content', content);
+  }
+
 	return (
 		<main className="py-8 px-4">
 			<CommentsSection
@@ -58,6 +62,7 @@ function App() {
         currentUser={data.currentUser}
         onUpVoteComment={upVoteComment}
 				onDownVoteComment={downVoteComment}
+        onEditCommentContent={editCommentContent}
       />
 		</main>
 	);

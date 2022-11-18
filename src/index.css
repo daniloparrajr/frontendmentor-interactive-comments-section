@@ -10,6 +10,6 @@
 
 @layer components {
     .btn {
-        @apply inline-block font-medium cursor-pointer text-white;
+        @apply inline-block font-medium cursor-pointer text-white bg-moderate-blue py-3 px-8 rounded-lg hover:bg-light-grayish-blue transition-colors;
     }
 }
