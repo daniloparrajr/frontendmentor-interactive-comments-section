@@ -55,6 +55,21 @@ function App() {
     updateComment(commentId, 'content', content);
   }
 
+  const addComment = (content) => {
+    const newComment = {
+      "id": Math.floor(Math.random() * 99999),
+      "content": content,
+      "createdAt": "1 month ago",
+      "score": 0,
+      "user": data.currentUser,
+      "replies": []
+    };
+    const newComments = [...comments, newComment];
+
+    localStorage.setItem('comments', JSON.stringify(newComments));
+    setComments(newComments);
+  }
+
 	return (
 		<main className="py-8 px-4">
 			<CommentsSection
@@ -63,6 +78,7 @@ function App() {
         onUpVoteComment={upVoteComment}
 				onDownVoteComment={downVoteComment}
         onEditCommentContent={editCommentContent}
+        onAddComment={addComment}
       />
 		</main>
 	);

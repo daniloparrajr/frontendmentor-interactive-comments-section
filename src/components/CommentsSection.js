@@ -1,7 +1,7 @@
 import Comment from './Comment';
 import CommenfForm from "./CommentForm";
 
-const Comments = ({comments, currentUser, onUpVoteComment, onDownVoteComment, onEditCommentContent}) => {
+const Comments = ({comments, currentUser, onUpVoteComment, onDownVoteComment, onEditCommentContent, onAddComment}) => {
 	return (
 		<section className="max-w-[45.625rem] mx-auto" aria-describedby="#commentsSectionHeading">
 			<h2 id="commentsSectionHeading" className="sr-only">Comments sections</h2>
@@ -17,7 +17,7 @@ const Comments = ({comments, currentUser, onUpVoteComment, onDownVoteComment, on
 					/>
 				))}
 			</div>
-			<CommenfForm user={currentUser} />
+			<CommenfForm onAddComment={onAddComment} user={currentUser} />
 		</section>
 	);
 }

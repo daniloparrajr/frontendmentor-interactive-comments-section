@@ -80,7 +80,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } 
   const renderEditForm = () => {
     return (
       <form onSubmit={(e)=>{onEditContentFormSubmit(e);}}>
-        <textarea className="border-moderate-blue border w-full h-auto rounded-lg py-4 px-6 text-grayish-blue mb-4" onChange={(e)=>{setCommentContent(e.target.value)}} defaultValue={content}></textarea>
+        <textarea className="block border-moderate-blue border w-full h-auto rounded-lg py-3 px-6 text-grayish-blue mb-4" onChange={(e)=>{setCommentContent(e.target.value)}} defaultValue={content}></textarea>
         <button className="btn px-5 block ml-auto">UPDATE</button>
       </form>
     );
