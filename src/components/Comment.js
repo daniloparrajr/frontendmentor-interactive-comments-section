@@ -5,10 +5,12 @@ import { ReactComponent as IconDelete } from '../images/icon-delete.svg';
 import { ReactComponent as IconEdit } from '../images/icon-edit.svg';
 import Avatar from "./Avatar";
 import {useState} from 'react';
+import CommenfForm from './CommentForm';
 
-const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } ) => {
-  const {id, content, createdAt, score, user, replyingTo } = details;
+const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, onAddReply } ) => {
+  const {id, content, createdAt, score, user, replyingTo, replies } = details;
   const [isEdit, setIsEdit] = useState(false);
+  const [isReplying, setisReplying] = useState(false);
   const [commentContent, setCommentContent] = useState(content);
 
 	const renderCurrentUserLabel = () => {
@@ -19,7 +21,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } 
 
 	const renderReplyButton = () => {
 		return (
-			<button className="text-moderate-blue flex items-center">
+			<button onClick={()=>{setisReplying(!isReplying)}} className="text-moderate-blue flex items-center">
 				<IconReply className="mr-2" />
 				<span className="font-medium">Reply</span>
 			</button>
@@ -42,10 +44,11 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } 
 	}
 
 	const renderReplies = (replies) => {
+    replies.sort((a, b) => b.score - a.score);
 		return (
-			<div className="pl-4 border-l-2 border-light-gray">
-				{replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote} onEditContent={onEditContent}/>)}
-			</div>
+      <>
+      {replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote} onEditContent={onEditContent} onAddReply={onAddReply}/>)}
+      </>
 		);
 	}
 
@@ -80,7 +83,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } 
   const renderEditForm = () => {
     return (
       <form onSubmit={(e)=>{onEditContentFormSubmit(e);}}>
-        <textarea className="block border-moderate-blue border w-full h-auto rounded-lg py-3 px-6 text-grayish-blue mb-4" onChange={(e)=>{setCommentContent(e.target.value)}} defaultValue={content}></textarea>
+        <textarea rows="3" className="block border border-light-gray border w-full h-auto rounded-lg py-3 px-6 text-grayish-blue mb-4 focus-visible:outline-moderate-blue" onChange={(e)=>{setCommentContent(e.target.value)}} defaultValue={content}></textarea>
         <button className="btn px-5 block ml-auto">UPDATE</button>
       </form>
     );
@@ -106,7 +109,11 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent } 
 				</div>
 			</div>
 
-			{details.replies && renderReplies(details.replies)}
+      <div className="pl-4 lg:ml-10.5 lg:pl-10.5 border-l-2 lg:border-l-3 border-light-gray">
+        {isReplying && <CommenfForm commentId={id} user={currentUser} onSubmit={onAddReply} />}
+
+        {replies && renderReplies(replies)}
+      </div>
 		</article>
 	);
 }

@@ -8,7 +8,6 @@ const getComments = () => {
 	if (localComments) {
 		localComments = JSON.parse(localComments);
 	} else {
-		data.comments.sort((a, b) => b.score - a.score);
 		localComments = JSON.stringify(data.comments);
 		localStorage.setItem('comments', localComments);
 	}
@@ -18,6 +17,7 @@ const getComments = () => {
 
 function App() {
 	const [comments, setComments] = useState(getComments());
+  comments.sort((a, b) => b.score - a.score);
 
 	const updateComment = (id, key, value) => {
     const newComment = [...comments];
@@ -64,9 +64,45 @@ function App() {
       "user": data.currentUser,
       "replies": []
     };
+
     const newComments = [...comments, newComment];
 
     localStorage.setItem('comments', JSON.stringify(newComments));
+    setComments(newComments);
+  }
+
+  const addReply = (content, id) => {
+    const newComments = [...comments];
+    const newReply = {
+      "id": Math.floor(Math.random() * 99999),
+      "content": content,
+      "createdAt": "1 month ago",
+      "score": 0,
+      "user": data.currentUser,
+    };
+
+    function recursiveUpdate(comment) {
+      if (comment.id === id) {
+        if ('replies' in comment) {
+          comment.replies = [...comment.replies, {...newReply, replyingTo: comment.user.usermae}]
+        } else {
+          comment.replies = [{...newReply, replyingTo: comment.user.usermae}]
+        }
+        return true;
+      } else if ( 'replies' in comment ) {
+        comment.replies.forEach((reply) => {
+          recursiveUpdate(reply);
+        });
+      }
+
+      return false;
+    }
+
+    newComments.some((comment) => {
+      return recursiveUpdate(comment);
+    });
+   
+		localStorage.setItem('comments', JSON.stringify(newComments));
     setComments(newComments);
   }
 
@@ -79,6 +115,7 @@ function App() {
 				onDownVoteComment={downVoteComment}
         onEditCommentContent={editCommentContent}
         onAddComment={addComment}
+        onAddReply={addReply}
       />
 		</main>
 	);

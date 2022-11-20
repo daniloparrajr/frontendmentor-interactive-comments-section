@@ -31,7 +31,13 @@ module.exports = {
 				'grayish-blue': 'hsl(211, 10%, 45%)',
 				'light-gray': 'hsl(223, 19%, 93%)',
 				'very-light-gray': 'hsl(228, 33%, 97%)',
-			}
+			},
+      borderWidth: {
+        '3': '3px',
+      },
+      spacing: {
+        '10.5' : '2.625rem'
+      }
 		},
 	},
 	plugins: [],
