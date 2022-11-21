@@ -7,7 +7,7 @@ import Avatar from "./Avatar";
 import {useState} from 'react';
 import CommenfForm from './CommentForm';
 
-const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, onAddReply } ) => {
+const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, onAddReply, onShowModal } ) => {
   const {id, content, createdAt, score, user, replyingTo, replies } = details;
   const [isEdit, setIsEdit] = useState(false);
   const [isReplying, setisReplying] = useState(false);
@@ -31,7 +31,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, o
 	const renderUserButtons = () => {
 		return (
 			<div className="flex">
-				<button className="text-soft-red flex items-center mr-6">
+				<button onClick={()=>onShowModal(id)} className="text-soft-red flex items-center mr-6">
 					<IconDelete className="mr-2" />
 					<span className="font-medium">Delete</span>
 				</button>
@@ -47,7 +47,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, o
     replies.sort((a, b) => b.score - a.score);
 		return (
       <>
-      {replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote} onEditContent={onEditContent} onAddReply={onAddReply}/>)}
+      {replies.map((reply)=> <Comment key={reply.id} details={reply} currentUser={currentUser} onUpVote={onUpVote} onDownVote={onDownVote} onEditContent={onEditContent} onAddReply={onAddReply} onShowModal={onShowModal}/>)}
       </>
 		);
 	}
@@ -103,7 +103,7 @@ const Comment = ( { details, currentUser, onUpVote, onDownVote, onEditContent, o
         </div>
 				<div className="flex justify-between lg:order-start lg:mr-6 lg:grow-0">
 					{renderScore()}
-          <div className="lg:absolute lg:z-50 lg:top-6 lg:right-6">
+          <div className="lg:absolute lg:z-20 lg:top-6 lg:right-6">
 					  {currentUser.username !== user.username ? renderReplyButton() : renderUserButtons()}
           </div>
 				</div>

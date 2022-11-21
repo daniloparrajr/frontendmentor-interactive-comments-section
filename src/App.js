@@ -1,5 +1,6 @@
 import data from './data/data.json';
 import CommentsSection from './components/CommentsSection';
+import Modal from './components/Modal';
 import {useState} from 'react';
 
 const getComments = () => {
@@ -8,8 +9,8 @@ const getComments = () => {
 	if (localComments) {
 		localComments = JSON.parse(localComments);
 	} else {
-		localComments = JSON.stringify(data.comments);
-		localStorage.setItem('comments', localComments);
+		localComments = data.comments;
+		localStorage.setItem('comments', JSON.stringify(data.comments));
 	}
 
 	return localComments;
@@ -17,30 +18,33 @@ const getComments = () => {
 
 function App() {
 	const [comments, setComments] = useState(getComments());
-  comments.sort((a, b) => b.score - a.score);
+	const [isModalActive, setIsModalActive] = useState(false);
+	const [deleteCommentId, setdeleteCommentId] = useState(null);
+
+	comments.sort((a, b) => b.score - a.score);
 
 	const updateComment = (id, key, value) => {
-    const newComment = [...comments];
+		const newComment = [...comments];
 
-    function recursiveUpdate(comment) {
-      if (comment.id === id) {
-        comment[key] = value;
-        return true;
-      } else if ( 'replies' in comment ) {
-        comment.replies.forEach((reply) => {
-          recursiveUpdate(reply);
-        });
-      }
+		function recursiveUpdate(comment) {
+			if (comment.id === id) {
+				comment[key] = value;
+				return true;
+			} else if ('replies' in comment) {
+				comment.replies.forEach((reply) => {
+					recursiveUpdate(reply);
+				});
+			}
 
-      return false;
-    }
+			return false;
+		}
 
-    newComment.some((comment) => {
-      return recursiveUpdate(comment);
-    });
-   
+		newComment.some((comment) => {
+			return recursiveUpdate(comment);
+		});
+
 		localStorage.setItem('comments', JSON.stringify(newComment));
-    setComments(newComment);
+		setComments(newComment);
 	}
 
 	const upVoteComment = (commentId, voteScore) => {
@@ -51,72 +55,113 @@ function App() {
 		updateComment(commentId, 'score', voteScore - 1);
 	}
 
-  const editCommentContent = (commentId, content) => {
-    updateComment(commentId, 'content', content);
-  }
+	const editCommentContent = (commentId, content) => {
+		updateComment(commentId, 'content', content);
+	}
 
-  const addComment = (content) => {
-    const newComment = {
-      "id": Math.floor(Math.random() * 99999),
-      "content": content,
-      "createdAt": "1 month ago",
-      "score": 0,
-      "user": data.currentUser,
-      "replies": []
-    };
+	const addComment = (content) => {
+		const newComment = {
+			"id": Math.floor(Math.random() * 99999),
+			"content": content,
+			"createdAt": "1 month ago",
+			"score": 0,
+			"user": data.currentUser,
+			"replies": []
+		};
 
-    const newComments = [...comments, newComment];
+		const newComments = [...comments, newComment];
 
-    localStorage.setItem('comments', JSON.stringify(newComments));
-    setComments(newComments);
-  }
-
-  const addReply = (content, id) => {
-    const newComments = [...comments];
-    const newReply = {
-      "id": Math.floor(Math.random() * 99999),
-      "content": content,
-      "createdAt": "1 month ago",
-      "score": 0,
-      "user": data.currentUser,
-    };
-
-    function recursiveUpdate(comment) {
-      if (comment.id === id) {
-        if ('replies' in comment) {
-          comment.replies = [...comment.replies, {...newReply, replyingTo: comment.user.usermae}]
-        } else {
-          comment.replies = [{...newReply, replyingTo: comment.user.usermae}]
-        }
-        return true;
-      } else if ( 'replies' in comment ) {
-        comment.replies.forEach((reply) => {
-          recursiveUpdate(reply);
-        });
-      }
-
-      return false;
-    }
-
-    newComments.some((comment) => {
-      return recursiveUpdate(comment);
-    });
-   
 		localStorage.setItem('comments', JSON.stringify(newComments));
-    setComments(newComments);
-  }
+		setComments(newComments);
+	}
+
+	const addReply = (content, id) => {
+		const newComments = [...comments];
+		const newReply = {
+			"id": Math.floor(Math.random() * 99999),
+			"content": content,
+			"createdAt": "1 month ago",
+			"score": 0,
+			"user": data.currentUser,
+		};
+
+		function recursiveUpdate(comment) {
+			if (comment.id === id) {
+				if ('replies' in comment) {
+					comment.replies = [...comment.replies, {...newReply, replyingTo: comment.user.usermae}]
+				} else {
+					comment.replies = [{...newReply, replyingTo: comment.user.usermae}]
+				}
+				return true;
+			} else if ('replies' in comment) {
+				comment.replies.forEach((reply) => {
+					recursiveUpdate(reply);
+				});
+			}
+
+			return false;
+		}
+
+		newComments.some((comment) => {
+			return recursiveUpdate(comment);
+		});
+
+		localStorage.setItem('comments', JSON.stringify(newComments));
+		setComments(newComments);
+	}
+
+	const deleteComment = () => {
+		const newComments = [...comments];
+		let index = 0
+
+		const recusiveDelete = (comment, parent, index) => {
+			if (comment.id === deleteCommentId) {
+				parent.splice(index, 1);
+				return true;
+			} else if ('replies' in comment) {
+				index = 0;
+				comment.replies.forEach((reply) => {
+					recusiveDelete(reply, comment.replies, index++);
+				});
+			}
+
+			return false;
+		}
+
+		newComments.some((newComment)=>{
+			return recusiveDelete(newComment, newComments, index++);
+		});
+
+		localStorage.setItem('comments', JSON.stringify(newComments));
+		setComments(newComments);
+		setIsModalActive(false);
+		console.log('hey!')
+	}
+
+	const showDeleteCommentModal = (id) => {
+		setIsModalActive(true);
+		setdeleteCommentId(id);
+	}
+
+	const hideDeleteCommentModal = () => {
+		setIsModalActive(false);
+		setdeleteCommentId(null);
+	}
 
 	return (
 		<main className="py-8 px-4">
 			<CommentsSection
-        comments={comments}
-        currentUser={data.currentUser}
-        onUpVoteComment={upVoteComment}
+				comments={comments}
+				currentUser={data.currentUser}
+				onUpVoteComment={upVoteComment}
 				onDownVoteComment={downVoteComment}
-        onEditCommentContent={editCommentContent}
-        onAddComment={addComment}
-        onAddReply={addReply}
-      />
+				onEditCommentContent={editCommentContent}
+				onAddComment={addComment}
+				onAddReply={addReply}
+				onShowModal={showDeleteCommentModal}
+			/>
+
+			{isModalActive && <Modal onHideModal={hideDeleteCommentModal} onDeleteComment={deleteComment}/>}
 		</main>
 	);
 }
