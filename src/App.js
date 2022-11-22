@@ -1,7 +1,7 @@
+import {useState} from 'react';
 import data from './data/data.json';
 import CommentsSection from './components/CommentsSection';
 import Modal from './components/Modal';
-import {useState} from 'react';
 
 const getComments = () => {
 	let localComments = localStorage.getItem('comments');
@@ -19,7 +19,7 @@ const getComments = () => {
 function App() {
 	const [comments, setComments] = useState(getComments());
 	const [isModalActive, setIsModalActive] = useState(false);
-	const [deleteCommentId, setdeleteCommentId] = useState(null);
+	const [deleteCommentId, setDeleteCommentId] = useState(null);
 
 	comments.sort((a, b) => b.score - a.score);
 
@@ -63,7 +63,7 @@ function App() {
 		const newComment = {
 			"id": Math.floor(Math.random() * 99999),
 			"content": content,
-			"createdAt": "1 month ago",
+			"createdAt": new Date(),
 			"score": 0,
 			"user": data.currentUser,
 			"replies": []
@@ -80,7 +80,7 @@ function App() {
 		const newReply = {
 			"id": Math.floor(Math.random() * 99999),
 			"content": content,
-			"createdAt": "1 month ago",
+			"createdAt": new Date(),
 			"score": 0,
 			"user": data.currentUser,
 		};
@@ -114,14 +114,14 @@ function App() {
 		const newComments = [...comments];
 		let index = 0
 
-		const recusiveDelete = (comment, parent, index) => {
+		const recursiveDelete = (comment, parent, index) => {
 			if (comment.id === deleteCommentId) {
 				parent.splice(index, 1);
 				return true;
 			} else if ('replies' in comment) {
 				index = 0;
 				comment.replies.forEach((reply) => {
-					recusiveDelete(reply, comment.replies, index++);
+					recursiveDelete(reply, comment.replies, index++);
 				});
 			}
 
@@ -129,23 +129,22 @@ function App() {
 		}
 
 		newComments.some((newComment)=>{
-			return recusiveDelete(newComment, newComments, index++);
+			return recursiveDelete(newComment, newComments, index++);
 		});
 
 		localStorage.setItem('comments', JSON.stringify(newComments));
 		setComments(newComments);
 		setIsModalActive(false);
-		console.log('hey!')
 	}
 
 	const showDeleteCommentModal = (id) => {
 		setIsModalActive(true);
-		setdeleteCommentId(id);
+		setDeleteCommentId(id);
 	}
 
 	const hideDeleteCommentModal = () => {
 		setIsModalActive(false);
-		setdeleteCommentId(null);
+		setDeleteCommentId(null);
 	}
 
 	return (
