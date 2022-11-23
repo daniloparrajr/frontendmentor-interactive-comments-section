@@ -5,6 +5,7 @@ import {ReactComponent as IconDelete} from '../images/icon-delete.svg';
 import {ReactComponent as IconEdit} from '../images/icon-edit.svg';
 import Avatar from "./Avatar";
 import {useState} from 'react';
+import {useAutoAnimate} from '@formkit/auto-animate/react';
 import CommentForm from './CommentForm';
 import ReactTimeAgo from 'react-time-ago'
 
@@ -14,6 +15,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 	const [isReplying, setIsReplying] = useState(false);
 	const [commentContent, setCommentContent] = useState(content);
 	const date = new Date(createdAt);
+	const [parent] = useAutoAnimate();
 
 	const renderCurrentUserLabel = () => {
 		return (
@@ -25,7 +27,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 		return (
 			<button onClick={() => {
 				setIsReplying(!isReplying)
-			}} className="text-moderate-blue flex items-center">
+			}} className={`text-moderate-blue flex items-center transition-opacity hover:opacity-70 ${isReplying && 'opacity-70'}`}>
 				<IconReply className="mr-2"/>
 				<span className="font-medium">Reply</span>
 			</button>
@@ -35,13 +37,13 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 	const renderUserButtons = () => {
 		return (
 			<div className="flex">
-				<button onClick={() => onShowModal(id)} className="text-soft-red flex items-center mr-6">
+				<button onClick={() => onShowModal(id)} className="text-soft-red flex items-center mr-6 transition-opacity hover:opacity-70">
 					<IconDelete className="mr-2"/>
 					<span className="font-medium">Delete</span>
 				</button>
 				<button onClick={() => {
 					setIsEdit(!isEdit)
-				}} className="text-moderate-blue flex items-center">
+				}} className={`text-moderate-blue flex items-center transition-opacity hover:opacity-70 ${isEdit && 'opacity-70'}`}>
 					<IconEdit className="mr-2"/>
 					<span className="font-medium">Edit</span>
 				</button>
@@ -133,7 +135,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 				</div>
 			</div>
 
-			<div className="pl-4 lg:ml-10.5 lg:pl-10.5 border-l-2 lg:border-l-3 border-light-gray">
+			<div className="pl-4 lg:ml-10.5 lg:pl-10.5 border-l-2 lg:border-l-3 border-light-gray" ref={parent}>
 				{isReplying && <CommentForm commentId={id} user={currentUser} onSubmit={onSubmitCommentForm}/>}
 
 				{replies && renderReplies(replies)}

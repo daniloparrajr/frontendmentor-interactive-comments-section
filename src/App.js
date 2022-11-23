@@ -1,7 +1,8 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import data from './data/data.json';
 import CommentsSection from './components/CommentsSection';
 import Modal from './components/Modal';
+import { AnimatePresence } from "framer-motion"
 
 const getComments = () => {
 	let localComments = localStorage.getItem('comments');
@@ -159,8 +160,9 @@ function App() {
 				onAddReply={addReply}
 				onShowModal={showDeleteCommentModal}
 			/>
-
-			{isModalActive && <Modal onHideModal={hideDeleteCommentModal} onDeleteComment={deleteComment}/>}
+			<AnimatePresence>
+				{isModalActive && <Modal onHideModal={hideDeleteCommentModal} onDeleteComment={deleteComment}/>}
+			</AnimatePresence>
 		</main>
 	);
 }
