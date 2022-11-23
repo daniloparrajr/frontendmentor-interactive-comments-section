@@ -149,7 +149,7 @@ function App() {
 	}
 
 	return (
-		<main className="py-8 px-4">
+		<main className="py-8 px-4 lg:py-16">
 			<CommentsSection
 				comments={comments}
 				currentUser={data.currentUser}

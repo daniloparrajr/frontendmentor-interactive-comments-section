@@ -74,18 +74,18 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 			<div className="bg-very-light-gray rounded-[10px] flex items-center lg:flex-col">
 				<button onClick={() => {
 					onUpVote(id, score)
-				}} className="p-3.5"><IconPlus/></button>
+				}} className="p-3.5"><IconPlus/><span className="sr-only">Upvote comment</span></button>
 				<span className="text-moderate-blue font-medium lg:py-[3px]">{score}</span>
 				<button onClick={() => {
 					onDownVote(id, score)
-				}} className="p-3.5"><IconMinus/></button>
+				}} className="p-3.5"><IconMinus/><span className="sr-only">Down-vote comment</span></button>
 			</div>
 		)
 	}
 
 	const renderContent = () => {
 		return (
-			<p className="text-grayish-blue mb-4">{replyingTo && renderReplyingto()}{content}</p>
+			<p className="text-grayish-blue">{replyingTo && renderReplyingto()}{content}</p>
 		);
 	}
 
