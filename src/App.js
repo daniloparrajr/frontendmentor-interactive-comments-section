@@ -150,6 +150,7 @@ function App() {
 
 	return (
 		<main className="py-8 px-4 lg:py-16">
+			<h1 className="sr-only">Interactive comments section</h1>
 			<CommentsSection
 				comments={comments}
 				currentUser={data.currentUser}
