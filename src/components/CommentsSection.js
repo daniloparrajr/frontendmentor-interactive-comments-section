@@ -15,7 +15,7 @@ const Comments = ({
 	const [parent] = useAutoAnimate();
 
 	return (
-		<section className="max-w-[45.625rem] mx-auto" aria-describedby="#commentsSectionHeading">
+		<section className="max-w-[45.625rem] mx-auto" aria-label="#commentsSectionHeading">
 			<h2 id="commentsSectionHeading" className="sr-only">Comments sections</h2>
 			<div className="mb-4" ref={parent}>
 				{comments.map(comment => (

@@ -75,7 +75,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 				<button onClick={() => {
 					onUpVote(id, score)
 				}} className="p-3.5"><IconPlus/><span className="sr-only">Upvote comment</span></button>
-				<span className="text-moderate-blue font-medium lg:py-[3px]">{score}</span>
+				<span className="text-moderate-blue font-medium lg:py-[3px] lg:px-1">{score}</span>
 				<button onClick={() => {
 					onDownVote(id, score)
 				}} className="p-3.5"><IconMinus/><span className="sr-only">Down-vote comment</span></button>
@@ -100,7 +100,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 			<form onSubmit={(e) => {
 				onEditContentFormSubmit(e);
 			}}>
-				<textarea rows="3"
+				<textarea required rows="3"
 						  className="block border border-light-gray border w-full h-auto rounded-lg py-3 px-6 text-grayish-blue mb-4 focus-visible:outline-moderate-blue"
 						  onChange={(e) => {
 							  setCommentContent(e.target.value)
@@ -127,7 +127,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 					</header>
 					{isEdit ? renderEditForm() : renderContent()}
 				</div>
-				<div className="flex justify-between lg:order-start lg:mr-6 lg:grow-0">
+				<div className="flex justify-between items-center lg:items-start mt-4 lg:mt-0 lg:order-start lg:mr-6 lg:grow-0">
 					{renderScore()}
 					<div className="lg:absolute lg:z-20 lg:top-6 lg:right-6">
 						{currentUser.username !== user.username ? renderReplyButton() : renderUserButtons()}
