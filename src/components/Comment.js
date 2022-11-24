@@ -121,7 +121,7 @@ const Comment = ({details, currentUser, onUpVote, onDownVote, onEditContent, onA
 				<div className="lg:order-last lg:grow">
 					<header className="flex flex-wrap items-center mb-4">
 						<Avatar user={user} extraClasses="mr-4"/>
-						<p className="font-bold text-dark-blue">{user.username}</p>
+						<h2 className="font-bold text-dark-blue">{user.username}</h2>
 						{currentUser.username === user.username && renderCurrentUserLabel()}
 						<p className="text-grayish-blue ml-4"><ReactTimeAgo date={date} locale="en-US" timeStyle="round-minute"/></p>
 					</header>
